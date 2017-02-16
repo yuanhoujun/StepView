@@ -23,20 +23,20 @@ public class StepView extends View {
 
     private final int DEFAULT_TEXT_COLOR = 0xffff1335;
     private final int DEFAULT_CURR_TEXT_COLOR = Color.RED;
+    private final int DEFAULT_DRAWABLE_SIZE = Util.dp2px(getContext() , 8);
 
     private Paint mTextPaint;
     private Paint mLinePaint;
 
     private int mReachedTextColor;
     private int mUnreachedTextColor;
-    private int mCurrentTextColor = DEFAULT_TEXT_COLOR;
+    private int mCurrentTextColor = DEFAULT_CURR_TEXT_COLOR;
     private int mTextColor = DEFAULT_TEXT_COLOR;
     private float mTextSize = 36;
     private Drawable mReachedDrawable;
     private Drawable mUnreachedDrawable;
     private Drawable mCurrentDrawable;
     private Drawable mDrawable;
-    private int mDrawableSize = Util.dp2px(getContext() , 10);
     private int mDrawableMargin = 0;
 
     private int mReachedLineColor;
@@ -89,7 +89,6 @@ public class StepView extends View {
         if (mCurrentDrawable == null) {
             mCurrentDrawable = mDrawable;
         }
-        mDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_drawableSize, mDrawableSize);
         mDrawableMargin = a.getDimensionPixelSize(R.styleable.StepView_drawableMargin, mDrawableMargin);
 
         mTextColor = a.getColor(R.styleable.StepView_textColor, mTextColor);
@@ -106,9 +105,9 @@ public class StepView extends View {
         mVerticalSpace = a.getDimensionPixelSize(R.styleable.StepView_verticalSpace, mVerticalSpace);
         mTextPostion = a.getInt(R.styleable.StepView_textPostion, mTextPostion);
 
-        mUnReachedDrwableSize = a.getDimensionPixelSize(R.styleable.StepView_unreachedDrawableSize, mDrawableSize);
-        mReachedDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_reachedDrawableSize, mDrawableSize);
-        mCurrentDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_currentDrawableSize, mDrawableSize);
+        mUnReachedDrwableSize = a.getDimensionPixelSize(R.styleable.StepView_unreachedDrawableSize, DEFAULT_DRAWABLE_SIZE);
+        mReachedDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_reachedDrawableSize, DEFAULT_DRAWABLE_SIZE);
+        mCurrentDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_currentDrawableSize, DEFAULT_DRAWABLE_SIZE);
         mLineType = a.getInt(R.styleable.StepView_lineType , LINE_TYPE_SOLID);
 
         a.recycle();
@@ -159,13 +158,9 @@ public class StepView extends View {
         int drawableTop;
         Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
 
-        if (mTextPostion == TEXT_POSTION_BOTTOM) {
-            textYPos = getHeight() - getPaddingBottom() - fontMetrics.bottom;
-            drawableTop = getPaddingTop();
-        } else {
-            textYPos = getPaddingTop() +  mTextHeight - fontMetrics.bottom;
-            drawableTop = getHeight() - getPaddingBottom() - mDrawableSize;
-        }
+        textYPos = getHeight() - getPaddingBottom() - fontMetrics.bottom;
+        drawableTop = getPaddingTop();
+
         //draw lables
         for (int i = 0; i < mLables.size(); i++) {
             if (i == mCurStep) {
@@ -216,8 +211,8 @@ public class StepView extends View {
         // 画线
         int lineCenter = drawableTop + maxDrawableSize / 2;
         for (int i = 0; i < mXPosList.size() - 1; i++) {
-            float lineLeft = mXPosList.get(i) + mDrawableSize * 0.5f + mDrawableMargin;
-            float lineRight = mXPosList.get(i + 1) - mDrawableSize * 0.5f - mDrawableMargin;
+            float lineLeft = 0;
+            float lineRight = 0;
 
             if(i + 1 <= mXPosList.size() - 1) {
                 if(i + 1 < mCurStep) {
@@ -369,13 +364,6 @@ public class StepView extends View {
         if (this.mDrawableMargin != mDrawableMargin) {
             this.mDrawableMargin = mDrawableMargin;
             invalidate();
-        }
-    }
-
-    public void setDrawableSize(int mDrawableSize) {
-        if (this.mDrawableSize != mDrawableSize) {
-            this.mDrawableSize = mDrawableSize;
-            requestLayout();
         }
     }
 
