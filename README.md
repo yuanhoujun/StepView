@@ -18,6 +18,6 @@ allprojects {
 Step 2. Add the dependency
 <pre>
 dependencies {
-    compile 'com.github.yuanhoujun:stepview:0.2.0'
+    compile 'com.github.yuanhoujun:stepview:0.3.0'
 }
 </pre>
