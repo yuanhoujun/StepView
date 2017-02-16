@@ -10,7 +10,7 @@
         <attr name="reachedLineColor" format="color" />
         <attr name="unreachedLineColor" format="color" />
         <attr name="lineColor" format="color" />
-        <attr name="lineHeight" format="dimension" />
+        <attr name="lineWidth" format="dimension" />
         <attr name="reachedTextColor" format="color" />
         <attr name="unreachedTextColor" format="color" />
         <attr name="currentTextColor" format="color" />
@@ -23,7 +23,7 @@
         </attr>
         <attr name="unreachedDrawableSize" format="dimension"/>
         <attr name="reachedDrawableSize" format="dimension"/>
-        <attr name="mCurrentDrawableSize" format="dimension"/>
+        <attr name="currentDrawableSize" format="dimension"/>
         <attr name="lineType" format="enum">
             <enum name="solid" value="0" />
             <enum name="dotted" value="1" />

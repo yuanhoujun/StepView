@@ -3,6 +3,7 @@ package cn.bit.szw.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -20,13 +21,16 @@ public class StepView extends View {
     public static final int TEXT_POSITION_TOP = 0;
     public static final int TEXT_POSTION_BOTTOM = 1;
 
+    private final int DEFAULT_TEXT_COLOR = 0xffff1335;
+    private final int DEFAULT_CURR_TEXT_COLOR = Color.RED;
+
     private Paint mTextPaint;
     private Paint mLinePaint;
 
     private int mReachedTextColor;
     private int mUnreachedTextColor;
-    private int mCurrentTextColor;
-    private int mTextColor = 0xffff1335;
+    private int mCurrentTextColor = DEFAULT_TEXT_COLOR;
+    private int mTextColor = DEFAULT_TEXT_COLOR;
     private float mTextSize = 36;
     private Drawable mReachedDrawable;
     private Drawable mUnreachedDrawable;
@@ -97,14 +101,14 @@ public class StepView extends View {
         mLineColor = a.getColor(R.styleable.StepView_lineColor, mLineColor);
         mReachedLineColor = a.getColor(R.styleable.StepView_reachedLineColor, mLineColor);
         mUnreachedLineColor = a.getColor(R.styleable.StepView_unreachedLineColor, mLineColor);
-        mLineWidth = a.getDimensionPixelSize(R.styleable.StepView_lineHeight, mLineWidth);
+        mLineWidth = a.getDimensionPixelSize(R.styleable.StepView_lineWidth, mLineWidth);
 
         mVerticalSpace = a.getDimensionPixelSize(R.styleable.StepView_verticalSpace, mVerticalSpace);
         mTextPostion = a.getInt(R.styleable.StepView_textPostion, mTextPostion);
 
         mUnReachedDrwableSize = a.getDimensionPixelSize(R.styleable.StepView_unreachedDrawableSize, mDrawableSize);
         mReachedDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_reachedDrawableSize, mDrawableSize);
-        mCurrentDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_mCurrentDrawableSize, mDrawableSize);
+        mCurrentDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_currentDrawableSize, mDrawableSize);
         mLineType = a.getInt(R.styleable.StepView_lineType , LINE_TYPE_SOLID);
 
         a.recycle();
@@ -117,8 +121,6 @@ public class StepView extends View {
         mLinePaint = new Paint();
         mLinePaint.setColor(mLineColor);
 
-        // 测试
-        mLineType = 1;
         switch (mLineType) {
             case LINE_TYPE_DOTTED: {
                 mLinePaint.setStyle(Paint.Style.STROKE);
@@ -213,7 +215,6 @@ public class StepView extends View {
 
         // 画线
         int lineCenter = drawableTop + maxDrawableSize / 2;
-//        int lineBottom = lineTop + mLineWidth;
         for (int i = 0; i < mXPosList.size() - 1; i++) {
             float lineLeft = mXPosList.get(i) + mDrawableSize * 0.5f + mDrawableMargin;
             float lineRight = mXPosList.get(i + 1) - mDrawableSize * 0.5f - mDrawableMargin;
@@ -241,8 +242,6 @@ public class StepView extends View {
 
             mPath.moveTo(lineLeft , lineCenter);
             mPath.lineTo(lineRight , lineCenter);
-//            canvas.drawRect(lineLeft, lineTop, lineRight, lineBottom, mLinePaint);
-//            canvas.drawLine(lineLeft , lineCenter , lineRight , lineCenter , mLinePaint);
             canvas.drawPath(mPath , mLinePaint);
 
         }
@@ -403,7 +402,7 @@ public class StepView extends View {
         }
     }
 
-    public void setLineHeight(int mLineHeight) {
+    public void setLineWidth(int mLineHeight) {
         if (this.mLineWidth != mLineHeight) {
             this.mLineWidth = mLineHeight;
             mLinePaint.setStrokeWidth(mLineWidth);
@@ -427,13 +426,16 @@ public class StepView extends View {
 
     public void setCurrentDrawableSize(int drawableSize) {
         mCurrentDrawableSize = drawableSize;
+        invalidate();
     }
 
     public void setReachedDrawableSize(int drawableSize) {
         mReachedDrawableSize = drawableSize;
+        invalidate();
     }
 
     public void setUnReachedDrawableSize(int drawableSize) {
         mUnReachedDrwableSize = drawableSize;
+        invalidate();
     }
 }

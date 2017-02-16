@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:step="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <cn.bit.szw.widget.StepView
         android:id="@+id/stepview"
-        android:background="#f1f1f1"
+        android:background="@android:color/transparent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         app:lineType="dotted"
-        />
+        app:reachedDrawable="@drawable/reached_marker"
+        app:unreachedDrawable="@drawable/unreached_marker"
+        app:currentDrawable="@drawable/current_marker"
+        app:reachedDrawableSize="19dp"
+        app:unreachedDrawableSize="8dp"
+        app:currentDrawableSize="19dp"
+        app:reachedTextColor="#C8C8C8"
+        app:unreachedTextColor="#C8C8C8"
+        app:currentTextColor="#42CFC8"
+        app:textSize="14dp"
+        app:lineWidth="1dp"/>
 </LinearLayout>
