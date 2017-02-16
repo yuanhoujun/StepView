@@ -76,39 +76,39 @@ public class StepView extends View {
         super(context, attrs, defStyleAttr);
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.StepView, defStyleAttr, 0);
 
-        mDrawable = a.getDrawable(R.styleable.StepView_drawable);
-        mReachedDrawable = a.getDrawable(R.styleable.StepView_reachedDrawable);
+        mDrawable = a.getDrawable(R.styleable.StepView_step_view_drawable);
+        mReachedDrawable = a.getDrawable(R.styleable.StepView_step_view_reachedDrawable);
         if (mReachedDrawable == null) {
             mReachedDrawable = mDrawable;
         }
-        mUnreachedDrawable = a.getDrawable(R.styleable.StepView_unreachedDrawable);
+        mUnreachedDrawable = a.getDrawable(R.styleable.StepView_step_view_unreachedDrawable);
         if (mUnreachedDrawable == null) {
             mUnreachedDrawable = mDrawable;
         }
-        mCurrentDrawable = a.getDrawable(R.styleable.StepView_currentDrawable);
+        mCurrentDrawable = a.getDrawable(R.styleable.StepView_step_view_currentDrawable);
         if (mCurrentDrawable == null) {
             mCurrentDrawable = mDrawable;
         }
-        mDrawableMargin = a.getDimensionPixelSize(R.styleable.StepView_drawableMargin, mDrawableMargin);
+        mDrawableMargin = a.getDimensionPixelSize(R.styleable.StepView_step_view_drawableMargin, mDrawableMargin);
 
-        mTextColor = a.getColor(R.styleable.StepView_textColor, mTextColor);
-        mReachedTextColor = a.getColor(R.styleable.StepView_reachedTextColor, mTextColor);
-        mUnreachedTextColor = a.getColor(R.styleable.StepView_unreachedTextColor, mTextColor);
-        mCurrentTextColor = a.getColor(R.styleable.StepView_currentTextColor, mTextColor);
-        mTextSize = a.getDimension(R.styleable.StepView_textSize, mTextSize);
+        mTextColor = a.getColor(R.styleable.StepView_step_view_textColor, mTextColor);
+        mReachedTextColor = a.getColor(R.styleable.StepView_step_view_reachedTextColor, mTextColor);
+        mUnreachedTextColor = a.getColor(R.styleable.StepView_step_view_unreachedTextColor, mTextColor);
+        mCurrentTextColor = a.getColor(R.styleable.StepView_step_view_currentTextColor, mTextColor);
+        mTextSize = a.getDimension(R.styleable.StepView_step_view_textSize, mTextSize);
 
-        mLineColor = a.getColor(R.styleable.StepView_lineColor, mLineColor);
-        mReachedLineColor = a.getColor(R.styleable.StepView_reachedLineColor, mLineColor);
-        mUnreachedLineColor = a.getColor(R.styleable.StepView_unreachedLineColor, mLineColor);
-        mLineWidth = a.getDimensionPixelSize(R.styleable.StepView_lineWidth, mLineWidth);
+        mLineColor = a.getColor(R.styleable.StepView_step_view_lineColor, mLineColor);
+        mReachedLineColor = a.getColor(R.styleable.StepView_step_view_reachedLineColor, mLineColor);
+        mUnreachedLineColor = a.getColor(R.styleable.StepView_step_view_unreachedLineColor, mLineColor);
+        mLineWidth = a.getDimensionPixelSize(R.styleable.StepView_step_view_lineWidth, mLineWidth);
 
-        mVerticalSpace = a.getDimensionPixelSize(R.styleable.StepView_verticalSpace, mVerticalSpace);
-        mTextPostion = a.getInt(R.styleable.StepView_textPostion, mTextPostion);
+        mVerticalSpace = a.getDimensionPixelSize(R.styleable.StepView_step_view_verticalSpace, mVerticalSpace);
+        mTextPostion = a.getInt(R.styleable.StepView_step_view_textPostion, mTextPostion);
 
-        mUnReachedDrwableSize = a.getDimensionPixelSize(R.styleable.StepView_unreachedDrawableSize, DEFAULT_DRAWABLE_SIZE);
-        mReachedDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_reachedDrawableSize, DEFAULT_DRAWABLE_SIZE);
-        mCurrentDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_currentDrawableSize, DEFAULT_DRAWABLE_SIZE);
-        mLineType = a.getInt(R.styleable.StepView_lineType , LINE_TYPE_SOLID);
+        mUnReachedDrwableSize = a.getDimensionPixelSize(R.styleable.StepView_step_view_unreachedDrawableSize, DEFAULT_DRAWABLE_SIZE);
+        mReachedDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_step_view_reachedDrawableSize, DEFAULT_DRAWABLE_SIZE);
+        mCurrentDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_step_view_currentDrawableSize, DEFAULT_DRAWABLE_SIZE);
+        mLineType = a.getInt(R.styleable.StepView_step_view_lineType , LINE_TYPE_SOLID);
 
         a.recycle();
 
