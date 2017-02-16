@@ -21,6 +21,13 @@
             <enum name="top" value="0" />
             <enum name="bottom" value="1" />
         </attr>
+        <attr name="unreachedDrawableSize" format="dimension"/>
+        <attr name="reachedDrawableSize" format="dimension"/>
+        <attr name="mCurrentDrawableSize" format="dimension"/>
+        <attr name="lineType" format="enum">
+            <enum name="solid" value="0" />
+            <enum name="dotted" value="1" />
+        </attr>
     </declare-styleable>
 
     <attr name="StepViewStyle" format="reference" />

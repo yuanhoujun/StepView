@@ -3,7 +3,9 @@ package cn.bit.szw.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -30,22 +32,33 @@ public class StepView extends View {
     private Drawable mUnreachedDrawable;
     private Drawable mCurrentDrawable;
     private Drawable mDrawable;
-    private int mDrawableSize = 24;
+    private int mDrawableSize = Util.dp2px(getContext() , 10);
     private int mDrawableMargin = 0;
 
     private int mReachedLineColor;
     private int mUnreachedLineColor;
     private int mLineColor = 0xffdddddd;
-    private int mLineHeight = 6;
+    private int mLineWidth = Util.dp2px(getContext() , 2);
 
     private int mTextPostion = TEXT_POSTION_BOTTOM;
     private int mVerticalSpace = 12;
 
     private int mTextHeight;
+    private int mUnReachedDrwableSize;
+    private int mReachedDrawableSize;
+    private int mCurrentDrawableSize;
+    private int mLineType;
 
     private List<Float> mXPosList;
     private List<String> mLables;
     private int mCurStep = 0;
+
+    // 实线
+    public static final int LINE_TYPE_SOLID = 0;
+    // 虚线
+    public static final int LINE_TYPE_DOTTED = 1;
+    // Line path
+    private Path mPath;
 
     public StepView(Context context) {
         this(context, null);
@@ -84,10 +97,15 @@ public class StepView extends View {
         mLineColor = a.getColor(R.styleable.StepView_lineColor, mLineColor);
         mReachedLineColor = a.getColor(R.styleable.StepView_reachedLineColor, mLineColor);
         mUnreachedLineColor = a.getColor(R.styleable.StepView_unreachedLineColor, mLineColor);
-        mLineHeight = a.getDimensionPixelSize(R.styleable.StepView_lineHeight, mLineHeight);
+        mLineWidth = a.getDimensionPixelSize(R.styleable.StepView_lineHeight, mLineWidth);
 
         mVerticalSpace = a.getDimensionPixelSize(R.styleable.StepView_verticalSpace, mVerticalSpace);
         mTextPostion = a.getInt(R.styleable.StepView_textPostion, mTextPostion);
+
+        mUnReachedDrwableSize = a.getDimensionPixelSize(R.styleable.StepView_unreachedDrawableSize, mDrawableSize);
+        mReachedDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_reachedDrawableSize, mDrawableSize);
+        mCurrentDrawableSize = a.getDimensionPixelSize(R.styleable.StepView_mCurrentDrawableSize, mDrawableSize);
+        mLineType = a.getInt(R.styleable.StepView_lineType , LINE_TYPE_SOLID);
 
         a.recycle();
 
@@ -98,6 +116,22 @@ public class StepView extends View {
         mTextPaint.setTextAlign(Paint.Align.CENTER);
         mLinePaint = new Paint();
         mLinePaint.setColor(mLineColor);
+
+        // 测试
+        mLineType = 1;
+        switch (mLineType) {
+            case LINE_TYPE_DOTTED: {
+                mLinePaint.setStyle(Paint.Style.STROKE);
+                mLinePaint.setPathEffect(new DashPathEffect(new float[]{8, 8, 8, 8}, 1));
+                break;
+            }
+            case LINE_TYPE_SOLID: {
+                mLinePaint.setStyle(Paint.Style.FILL);
+                break;
+            }
+        }
+        mLinePaint.setStrokeWidth(mLineWidth);
+        mPath = new Path();
         mTextHeight = getTextHeight(mTextPaint);
     }
 
@@ -105,7 +139,7 @@ public class StepView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(getMeasuredWidth(), getPaddingTop() + getPaddingBottom() + mTextHeight + mDrawableSize + mVerticalSpace);
+        setMeasuredDimension(getMeasuredWidth(), getPaddingTop() + getPaddingBottom() + mTextHeight + maxDrawableSize() + mVerticalSpace);
 
     }
 
@@ -127,15 +161,14 @@ public class StepView extends View {
             textYPos = getHeight() - getPaddingBottom() - fontMetrics.bottom;
             drawableTop = getPaddingTop();
         } else {
-            textYPos = getPaddingTop() +  mTextHeight -fontMetrics.bottom;
+            textYPos = getPaddingTop() +  mTextHeight - fontMetrics.bottom;
             drawableTop = getHeight() - getPaddingBottom() - mDrawableSize;
         }
         //draw lables
         for (int i = 0; i < mLables.size(); i++) {
-            int step = i + 1;
-            if (step == mCurStep) {
+            if (i == mCurStep) {
                 mTextPaint.setColor(mCurrentTextColor);
-            } else if (step < mCurStep) {
+            } else if (i < mCurStep) {
                 mTextPaint.setColor(mReachedTextColor);
             } else {
                 mTextPaint.setColor(mUnreachedTextColor);
@@ -145,42 +178,81 @@ public class StepView extends View {
 
         //draw markers
         int top = drawableTop;
-        int bottom = drawableTop + mDrawableSize;
+        int bottom ;
+        int maxDrawableSize = maxDrawableSize();
 
         for (int i = 0; i < mXPosList.size(); i++) {
-            float left = mXPosList.get(i) - mDrawableSize * 0.5f;
-            float right = left + mDrawableSize;
+            float left;
+            float right;
+            int dTop;
             Drawable drawable;
-            int step = i + 1;
-            if (step < mCurStep) {
+
+            if (i < mCurStep) {
+                left = mXPosList.get(i) - mReachedDrawableSize * 0.5f;
                 drawable = mReachedDrawable;
-            } else if (step == mCurStep) {
+                dTop = top + (maxDrawableSize - mReachedDrawableSize) / 2;
+                bottom = dTop + mReachedDrawableSize;
+                right = left + mReachedDrawableSize;
+            } else if (i == mCurStep) {
+                left = mXPosList.get(i) - mCurrentDrawableSize * 0.5f;
                 drawable = mCurrentDrawable;
+                dTop = top + (maxDrawableSize - mCurrentDrawableSize) / 2;
+                bottom = dTop + mCurrentDrawableSize;
+                right = left + mCurrentDrawableSize;
             } else {
+                left = mXPosList.get(i) - mUnReachedDrwableSize * 0.5f;
                 drawable = mUnreachedDrawable;
+                dTop = top + (maxDrawableSize - mUnReachedDrwableSize) / 2;
+                bottom = dTop + mUnReachedDrwableSize;
+                right = left + mUnReachedDrwableSize;
             }
 
-            drawable.setBounds((int) left, top, (int) right, bottom);
+            drawable.setBounds((int) left, dTop, (int) right, bottom);
             drawable.draw(canvas);
         }
 
-        //draw line
-        int lineTop = drawableTop + mDrawableSize / 2 - mLineHeight / 2;
-        int lineBottom = lineTop + mLineHeight;
+        // 画线
+        int lineCenter = drawableTop + maxDrawableSize / 2;
+//        int lineBottom = lineTop + mLineWidth;
         for (int i = 0; i < mXPosList.size() - 1; i++) {
-            int step = i + 2;
             float lineLeft = mXPosList.get(i) + mDrawableSize * 0.5f + mDrawableMargin;
             float lineRight = mXPosList.get(i + 1) - mDrawableSize * 0.5f - mDrawableMargin;
-            if (step <= mCurStep) {
-                mLinePaint.setColor(mReachedLineColor);
-            } else {
-                mLinePaint.setColor(mUnreachedLineColor);
-            }
-            canvas.drawRect(lineLeft, lineTop, lineRight, lineBottom, mLinePaint);
-        }
 
+            if(i + 1 <= mXPosList.size() - 1) {
+                if(i + 1 < mCurStep) {
+                    lineLeft = mXPosList.get(i) + mReachedDrawableSize * 0.5f + mDrawableMargin;
+                    lineRight = mXPosList.get(i + 1) - mReachedDrawableSize * 0.5f - mDrawableMargin;
+                    mLinePaint.setColor(mReachedLineColor);
+                } else if(i + 1 == mCurStep) {
+                    lineLeft = mXPosList.get(i) + mReachedDrawableSize * 0.5f + mDrawableMargin;
+                    lineRight = mXPosList.get(i + 1) - mCurrentDrawableSize * 0.5f - mDrawableMargin;
+                    mLinePaint.setColor(mReachedLineColor);
+                } else {
+                    if(i == mCurStep) {
+                        lineLeft = mXPosList.get(i) + mCurrentDrawableSize * 0.5f + mDrawableMargin;
+                        lineRight = mXPosList.get(i + 1) - mUnReachedDrwableSize * 0.5f - mDrawableMargin;
+                    } else {
+                        lineLeft = mXPosList.get(i) + mUnReachedDrwableSize * 0.5f + mDrawableMargin;
+                        lineRight = mXPosList.get(i + 1) - mUnReachedDrwableSize * 0.5f - mDrawableMargin;
+                    }
+                    mLinePaint.setColor(mUnreachedLineColor);
+                }
+            }
+
+            mPath.moveTo(lineLeft , lineCenter);
+            mPath.lineTo(lineRight , lineCenter);
+//            canvas.drawRect(lineLeft, lineTop, lineRight, lineBottom, mLinePaint);
+//            canvas.drawLine(lineLeft , lineCenter , lineRight , lineCenter , mLinePaint);
+            canvas.drawPath(mPath , mLinePaint);
+
+        }
     }
 
+    private int maxDrawableSize() {
+        int maxDrawableSize = Math.max(mReachedDrawableSize , mUnReachedDrwableSize);
+        maxDrawableSize = Math.max(mCurrentDrawableSize , maxDrawableSize);
+        return maxDrawableSize;
+    }
 
     private List<Float> calLableXpos() {
         List<Float> xPosList = new ArrayList<Float>();
@@ -222,6 +294,7 @@ public class StepView extends View {
 
     public void setCurrentStep(int step) {
         mCurStep = step;
+        invalidate();
     }
 
     public void setTextSize(float textSize) {
@@ -331,8 +404,9 @@ public class StepView extends View {
     }
 
     public void setLineHeight(int mLineHeight) {
-        if (this.mLineHeight != mLineHeight) {
-            this.mLineHeight = mLineHeight;
+        if (this.mLineWidth != mLineHeight) {
+            this.mLineWidth = mLineHeight;
+            mLinePaint.setStrokeWidth(mLineWidth);
             invalidate();
         }
     }
@@ -351,4 +425,15 @@ public class StepView extends View {
         }
     }
 
+    public void setCurrentDrawableSize(int drawableSize) {
+        mCurrentDrawableSize = drawableSize;
+    }
+
+    public void setReachedDrawableSize(int drawableSize) {
+        mReachedDrawableSize = drawableSize;
+    }
+
+    public void setUnReachedDrawableSize(int drawableSize) {
+        mUnReachedDrwableSize = drawableSize;
+    }
 }
